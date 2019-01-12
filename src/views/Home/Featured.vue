@@ -12,11 +12,11 @@
           <div class="gradient">
             <div class="container">
               <div class="content">
-                <button 
-                type="link"
-                linkTo="#">
+                <app-button
+                  type="link"
+                  linkTo="#">
                   See Review
-                </button>
+                </app-button>
                 <div class="item">
                   {{ slide.title }}
                 </div>

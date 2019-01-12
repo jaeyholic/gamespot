@@ -1,13 +1,14 @@
 <template>
   <div>
-    <router-link 
-    v-if="type === 'link'"
-    :to="linkTo"
-    :class="['button_default']">
+    <router-link
+      v-if="type === 'link'"
+      :to="linkTo"
+      :class="['button_default']">
       <slot />
     </router-link>
-
-    <div v-if="type === 'btn'">
+    <div 
+      v-if="type === 'btn'"
+      :class="['button_default']">
       <slot />
     </div>
   </div>
@@ -15,7 +16,7 @@
 
 <script>
   export default {
-    props: ['linkTo', 'link']
+    props: ['linkTo', 'type']
   }
 </script>
 
