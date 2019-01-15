@@ -11,7 +11,9 @@ const admin = {
   state: {
     token: null,
     refresh: null,
-    authFailed: false
+    authFailed: false,
+    refreshLoader: true,
+    addPost: false
   },
   getters: {
     isAuth(state) {
@@ -19,6 +21,12 @@ const admin = {
         return true
       }
       return false
+    },
+    refreshLoader(state) {
+      return state.refreshLoader
+    },
+    addPostStatus(state) {
+      return state.addPost
     }
   },
   mutations: {
@@ -46,6 +54,15 @@ const admin = {
 
       //direct user back to home after logout
       router.push('/')
+    },
+    refreshLoader(state) {
+      state.refreshLoader = false
+    },
+    addPost(state) {
+      state.addPost = true
+    },
+    clearAddPost(state) {
+      state.addPost = false
     }
   },
   actions: {
@@ -83,10 +100,26 @@ const admin = {
             refreshToken: authData.refresh_token,
             type: 'refresh'
           })
+          commit('refreshLoader')
           localStorage.setItem("token", authData.id_token)
           localStorage.setItem("refresh", authData.refresh_token)
         })
+      } else {
+        commit('refreshLoader')
       }
+    },
+    addPost({commit, state}, payload) {
+      Vue.http.post(`posts.json?auth=${state.token}`, payload)
+      .then(response => response.json())
+      .then(response => {
+        commit('addPost')
+        setTimeout(() => {
+          commit('clearAddPost')
+        }, 3000)
+      })
+    },
+    imgUpload({commit}, file) {
+      const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/lunar-studios/image/upload"
     }
   }
 }
