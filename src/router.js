@@ -10,6 +10,8 @@ import Dashboard from "./views/Dashboard";
 import MainDashboard from './views/Dashboard/Main.vue'
 import AddPosts from './views/Dashboard/AddPost.vue'
 import PostsList from './views/Dashboard/ListPosts.vue'
+import Post from './views/Post'
+import Error from './views/Error'
 
 Vue.use(Router);
 
@@ -75,6 +77,16 @@ export default new Router({
         }
       ],
       ...authGuard
+    },
+    {
+      path: "/post/:id",
+      name: "Post",
+      component: Post
+    },
+    {
+      path: '*',
+      name: "Error",
+      component: Error
     }
   ]
 });

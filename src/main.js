@@ -7,7 +7,7 @@ import Vuelidate from "vuelidate";
 import wysiwyg from 'vue-wysiwyg'
 
 //VueMaterial
-import { MdCard, MdContent, MdButton, MdDialog } from "vue-material/dist/components";
+import { MdCard, MdContent, MdButton, MdDialog, MdTable, MdDialogConfirm } from "vue-material/dist/components";
 import "vue-material/dist/vue-material.min.css";
 
 
@@ -28,6 +28,8 @@ Vue.use(MdCard);
 Vue.use(MdContent);
 Vue.use(MdButton);
 Vue.use(MdDialog);
+Vue.use(MdTable);
+Vue.use(MdDialogConfirm);
 
 //WYSIWYG
 Vue.use(wysiwyg,{});

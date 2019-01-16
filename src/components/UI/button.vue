@@ -3,12 +3,15 @@
     <router-link
       v-if="type === 'link'"
       :to="linkTo"
-      :class="['button_default']">
+      :class="['button_default', ...addClass]"
+      :style="ovStyle">
       <slot />
     </router-link>
     <div 
       v-if="type === 'btn'"
-      :class="['button_default']">
+      :class="['button_default', ...addClass]"
+      :style="ovStyle"
+      @click="action">
       <slot />
     </div>
   </div>
@@ -16,7 +19,7 @@
 
 <script>
   export default {
-    props: ['linkTo', 'type']
+    props: ['linkTo', 'type', 'addClass', 'action', 'ovStyle']
   }
 </script>
 

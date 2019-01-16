@@ -13,7 +13,9 @@ const admin = {
     refresh: null,
     authFailed: false,
     refreshLoader: true,
-    addPost: false
+    addPost: false,
+    imgUpload: null,
+    adminPosts: null
   },
   getters: {
     isAuth(state) {
@@ -27,6 +29,12 @@ const admin = {
     },
     addPostStatus(state) {
       return state.addPost
+    },
+    imgUpload(state) {
+      return state.imgUpload
+    },
+    getAdminPosts(state) {
+      return state.adminPosts
     }
   },
   mutations: {
@@ -63,6 +71,15 @@ const admin = {
     },
     clearAddPost(state) {
       state.addPost = false
+    },
+    imgUpload(state, imgData) {
+      state.imgUpload = imgData.secure_url
+    },
+    clearImgUpload(state) {
+      state.imgUpload = null
+    },
+    getAdminPosts(state, posts) {
+      state.adminPosts = posts
     }
   },
   actions: {
@@ -120,6 +137,47 @@ const admin = {
     },
     imgUpload({commit}, file) {
       const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/lunar-studios/image/upload"
+      const CLOUDINARY_PRESET = 'qssdufvp'
+
+      let formData = new FormData();
+      formData.append('file', file)
+      formData.append('upload_preset', CLOUDINARY_PRESET)
+
+      Vue.http.post(CLOUDINARY_URL, formData, {
+        headers: {
+          'Content-type': 'application/x-www-form-urlencoded'
+        }
+      })
+      .then(response => response.json())
+      .then(response => {
+        commit('imgUpload', response)
+      })
+    },
+    getAdminPosts({commit}) {
+      Vue.http.get('posts.json')
+      .then(response => response.json())
+      .then(response => {
+        const posts = []
+        for(let key in response) {
+          posts.push({
+            ...response[key],
+            id: key
+          })
+        }
+        commit('getAdminPosts', posts.reverse())
+      })
+    },
+    deletePost({commit, state}, payload) {
+      Vue.http.delete(`posts/${payload}.json?auth=${state.token}`)
+      .then(response => {
+        let newPosts = []
+        state.adminPosts.forEach(post => {
+          if(post.id != payload) {
+            newPosts.push(post)
+          }
+        })
+        commit('getAdminPosts', newPosts)
+      })
     }
   }
 }

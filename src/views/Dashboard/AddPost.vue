@@ -2,9 +2,13 @@
   <div class="dashboard_form">
     <h1>Add Posts</h1>
     <form @submit.prevent="submitHandler">
+      <div v-if="imgUpload">
+        <img :src="imgUpload">
+      </div>
       <div class="input_field">
         <input type="file"
-        @change="processFile($event)">
+        @change="processFile($event)"
+        ref="myFileInput">
       </div>
 
       <div class="input_field"
@@ -19,16 +23,16 @@
       </div>
 
       <div class="input_field"
-      :class="{invalid: $v.formData.desc.$error}">
-        <label for="text">Description</label>
+      :class="{invalid: $v.formData.plat.$error}">
+        <label for="text">Platform</label>
         <input type="text"
-        @blur="$v.formData.desc.$touch()" 
-        v-model="formData.desc">
-        <p class="error_label" v-if="$v.formData.desc.$error">
+        @blur="$v.formData.plat.$touch()" 
+        v-model="formData.plat">
+        <p class="error_label" v-if="$v.formData.plat.$error">
           This input is required
         </p>
-        <p class="error_label" v-if="$v.formData.desc.maxLength">
-          Must not be more than {{$v.formData.desc.$params.maxLength.max}} characters
+        <p class="error_label" v-if="$v.formData.plat.maxLength">
+          Must not be more than {{$v.formData.plat.$params.maxLength.max}} characters
         </p>
       </div>
 
@@ -65,7 +69,7 @@
       </md-dialog-actions>
     </md-dialog>
 
-    <div v-if="addPostSuccess" class="post_successful">
+    <div v-if="addPostSuccess" class="post_succesfull">
       Your Post was successfully added.
     </div>
   </div>
@@ -77,8 +81,9 @@ import { required, maxLength } from 'vuelidate/lib/validators'
     data() {
       return {
         formData: {
+          img: '',
           title: '',
-          desc: '',
+          plat: '',
           content: '',
           rating: ''
         },
@@ -90,7 +95,7 @@ import { required, maxLength } from 'vuelidate/lib/validators'
         title: {
           required
         },
-        desc: {
+        plat: {
           required,
           maxLength: maxLength(100)
         },
@@ -100,12 +105,20 @@ import { required, maxLength } from 'vuelidate/lib/validators'
       }
     },
     computed: {
+      //Adding Post success 
       addPostSuccess() {
         let status = this.$store.getters['admin/addPostStatus']
         if(status) {
           this.clearPost()
+          this.$store.commit('admin/clearImgUpload')
         }
         return status
+      },
+      //img upload
+      imgUpload() {
+        let imgUrl = this.$store.getters['admin/imgUpload']
+        this.formData.img = imgUrl
+        return imgUrl
       }
     },
     methods: {
@@ -134,9 +147,10 @@ import { required, maxLength } from 'vuelidate/lib/validators'
       },
       clearPost() {
         this.$v.$reset()
+        this.$refs.myFileInput.value = ''
         this.formData = {
           title: '',
-          desc: '',
+          plat: '',
           content: '',
           rating: ''
         }
@@ -145,6 +159,9 @@ import { required, maxLength } from 'vuelidate/lib/validators'
         let file = event.target.files[0]
         this.$store.dispatch('admin/imgUpload', file)
       }
+    },
+    destroyed() {
+      this.$store.commit('admin/clearImgUpload')
     }
   }
 </script>
@@ -153,6 +170,6 @@ import { required, maxLength } from 'vuelidate/lib/validators'
 @import "~vue-wysiwyg/dist/vueWysiwyg.css";
   .input_field.invalid input,
   .input_field.invalid select {
-    border: 1pz solid red;
+    border: 1px solid red;
   }
 </style>
